@@ -1,24 +1,28 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react'
 import './App.css';
+import { get, post } from './utils'
 
-function App() {
+import { Sidebar } from './Components/Sidebar'
+import { Tile } from './Components/Tile'
+import { Row } from './Components/Layout'
+
+const App = () => {
+  const [events, setEvents] = useState([])
+  const [user, setUser] = useState({name: "Anders"})
+  const [loggedIn, setLoggedIn] = useState(false)
+
+  useEffect(() => {
+    get("/event/getAll").then(response => {
+      setEvents(response.events)
+    })
+  }, [])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Row>
+    <Sidebar user={user} setUser={setUser} loggedIn={loggedIn} setLoggedIn={setLoggedIn}></Sidebar>
+    {events.map((event, i) => (
+      <Tile key={i} event={event}></Tile>
+    ))}
+    </Row>
   );
 }
 
