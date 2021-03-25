@@ -1,29 +1,42 @@
 import React from 'react'
-import styled from 'styled-components'
+import Participants from './Participants'
+import { post } from '../utils'
+
+import { Input, TileWrapper, Group } from './Layout'
+import { TileTitle, TileParagraph, Label } from './Text'
 
 export const Tile = ({...props}) => {
-  console.log(props)
-  const TileWrapper = styled.div`
-    padding: 40px;
-    margin: 40px;
-    min-height: 300px;
-    max-height: 80vh;
-    min-width: 300px;
-    border-radius: 50px;
-    background-color: white;
-    filter: drop-shadow(0 0 10px #555);
-  `
-  const TileTitle = styled.h2`
-    font-family: Helvetica;
-  `
 
-  const TileParagraph = styled.p`
+  const signUpForEvent = () => {
+    if(props.event.participants.indexOf(props.user.id) === -1) {
+      post('/userEvent/signUp', {user: props.user, event: props.event}).then(response => {
+        window.location.reload(false)
+      })
+    }else {
+      console.warn("Du er allerede tilmeldt dette event!")
+    }
+  }
 
-  `
   return (
     <TileWrapper>
-      <TileTitle>{props.event.name}</TileTitle>
-      <TileParagraph>{props.event.description}</TileParagraph>
+      <Group>
+        <TileTitle>{props.event.name}</TileTitle>
+        <Label>{new Date(props.event.date).toString()}</Label>
+        <TileParagraph>{props.event.description}</TileParagraph>
+      </Group>
+      <Group>
+        {props.loggedIn && (
+          <Input type={"button"} value={"Tilmeld"} onClick={signUpForEvent}></Input>
+        )}
+        {!props.loggedIn && (
+          <Input type={"button"} value={"Log ind for at tilmelde dig"} disabled></Input>
+        )}
+      </Group>
+      <Group>
+        {props.event.participants.length && props.users && (
+          <Participants users={props.users} participants={props.event.participants}/>
+        )}
+      </Group>
     </TileWrapper>
   )
 }

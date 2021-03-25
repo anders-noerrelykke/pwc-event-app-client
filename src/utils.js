@@ -5,7 +5,6 @@ export const get = async (url) => {
 }
 
 export const post = async (url, body) => {
-  console.log(body)
   const request = await fetch(url, 
     {
       method: "POST",

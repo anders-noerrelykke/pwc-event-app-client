@@ -1,33 +1,37 @@
-import React from 'react'
-import styled from 'styled-components'
+import React, { useState } from 'react'
+import { post } from '../utils'
 
 import { Title } from './Text'
 import { Input } from './Layout'
 
+import { LoginWrapper } from './Layout'
+
 const Signup = ({...props}) => {
-  const LoginWrapper = styled.div`
-    margin: 50px 0;
-    width: 100;
-  `
+  const [newUser, setNewUser] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: ""
+  })
 
-  const signUp = () => {
-
-  }
-
-  const handleClick = (e) => {
-    e.preventDefault()
-    signUp()
+  const register = () => {
+    post('/user/register', newUser).then(response => {
+      console.log(response)
+      if(response.status === 200) {
+        props.setUser(response.user)
+        props.setLoggedIn(true)
+      }
+    })
   }
   
   return (
     <LoginWrapper>
       <Title>Ny på platformen?</Title>
-      <Input type={"input"} name={"firstName"} placeholder={"Fornavn"}/>
-      <Input type={"input"} name={"lastName"} placeholder={"Efternavn"}/>
-      <Input type={"input"} name={"email"} placeholder={"Email"}/>
-      <Input type={"input"} name={"phone"} placeholder={"Telefon"}/>
-      <Input type={"button"} onClick={handleClick} value={"Registrer"}/>  
-
+      <Input type={"input"} name={"firstName"} placeholder={"Fornavn"} value={newUser.firstName} onChange={e => setNewUser({...newUser, [e.target.name]: e.target.value})}/>
+      <Input type={"input"} name={"lastName"} placeholder={"Efternavn"} value={newUser.lastName} onChange={e => setNewUser({...newUser, [e.target.name]: e.target.value})}/>
+      <Input type={"input"} name={"email"} placeholder={"Email"} value={newUser.email} onChange={e => setNewUser({...newUser, [e.target.name]: e.target.value})}/>
+      <Input type={"input"} name={"phone"} placeholder={"Telefon"} value={newUser.phone} onChange={e => setNewUser({...newUser, [e.target.name]: e.target.value})}/>
+      <Input type={"button"} value={"Registrer"} onClick={register}/>  
     </LoginWrapper>
   )
 }
